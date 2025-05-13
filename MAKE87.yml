@@ -1,6 +1,33 @@
 build_kit:
-  name: rust
+  name: rust_av
   version: latest
 outbound_topics:
-  - name: OUTGOING_MESSAGE
-    message_type: make87_messages.text.text_plain.PlainText
+  - name: IMAGE_RAW
+    message_type: make87_messages.image.uncompressed.ImageRawAny
+config:
+  values:
+    - name: IMAGE_FORMAT
+      description: "Format of the image to be sent. Options are 'RGB888' or 'YUV420'."
+      required: true
+    - name: CAMERA_IP
+      description: "IP address of the camera"
+      required: true
+    - name: CAMERA_PORT
+      description: "Port of the camera"
+      required: false
+      default: "554"
+    - name: CAMERA_URI_SUFFIX
+      description: "URI suffix for the camera stream"
+      required: false
+      default: ""
+    - name: CAMERA_USERNAME
+      description: "Username used for camera login"
+      required: true
+      secret: false
+    - name: CAMERA_PASSWORD
+      description: "Password used for camera login"
+      required: true
+      secret: true
+    - name: STREAM_INDEX
+      description: "Index of the stream to use. Will raise an error if the index is out of range."
+      default: "0"

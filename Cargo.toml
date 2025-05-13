@@ -1,8 +1,14 @@
 [package]
-name = "publisher_template"
+name = "rtsp-camera-driver-raw"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
 make87 = "*"
-make87_messages = "*"
+make87_messages = ">=0.2.6"
+anyhow = "1.0.98"
+futures = "0.3.31"
+tokio = "1.45.0"
+tokio-stream = { version = "0.1.17", features = ["sync"] }
+url = "2.5.4"
+ffmpeg-sidecar = "2.0.5"
