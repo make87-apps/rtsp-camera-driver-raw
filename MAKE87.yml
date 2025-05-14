@@ -22,11 +22,11 @@ config:
       default: ""
     - name: CAMERA_USERNAME
       description: "Username used for camera login"
-      required: true
+      required: false
       secret: false
     - name: CAMERA_PASSWORD
       description: "Password used for camera login"
-      required: true
+      required: false
       secret: true
     - name: STREAM_INDEX
       description: "Index of the stream to use. Will raise an error if the index is out of range."

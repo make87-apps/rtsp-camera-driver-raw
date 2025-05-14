@@ -199,10 +199,8 @@ where
 }
 
 fn load_camera_config() -> Result<CameraConfig, anyhow::Error> {
-    let username = make87::get_config_value("CAMERA_USERNAME")
-        .ok_or_else(|| anyhow::anyhow!("CAMERA_USERNAME is required"))?;
-    let password = make87::get_config_value("CAMERA_PASSWORD")
-        .ok_or_else(|| anyhow::anyhow!("CAMERA_PASSWORD is required"))?;
+    let username = make87::get_config_value("CAMERA_USERNAME").unwrap_or_default();
+    let password = make87::get_config_value("CAMERA_PASSWORD").unwrap_or_default();
     let ip = make87::get_config_value("CAMERA_IP")
         .ok_or_else(|| anyhow::anyhow!("CAMERA_IP is required"))?;
     let port = make87::get_config_value("CAMERA_PORT").unwrap_or_else(|| "554".to_string());
@@ -266,14 +264,28 @@ async fn main() -> Result<()> {
     let mut receivers = Vec::new();
 
     for idx in 0..config.ip.len() {
+        // Compose RTSP URL with optional username/password
+        let user = config.username.get(idx).and_then(|u| {
+            if !u.is_empty() { Some(u) } else { None }
+        });
+        let pass = config.password.get(idx).and_then(|p| {
+            if !p.is_empty() { Some(p) } else { None }
+        });
+
+        let userinfo = match (user, pass) {
+            (Some(u), Some(p)) => format!("{}:{}@", u, p),
+            (Some(u), None) => format!("{}@", u),
+            (None, _) => "".to_string(),
+        };
+
         let rtsp_url = format!(
-            "rtsp://{}:{}@{}:{}/{}",
-            config.username[idx],
-            config.password[idx],
-            config.ip[idx],
-            config.port[idx],
-            config.uri_suffix[idx]
+            "rtsp://{}{host}:{port}/{path}",
+            userinfo,
+            host = config.ip[idx],
+            port = config.port[idx],
+            path = config.uri_suffix[idx]
         );
+
         let (sender, receiver) = watch::channel(None);
         receivers.push(receiver);
         let stream_index = config.stream_index[idx];
@@ -307,3 +319,4 @@ async fn main() -> Result<()> {
 
     Ok(())
 }
+
