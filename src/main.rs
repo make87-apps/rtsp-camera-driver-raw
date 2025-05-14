@@ -127,15 +127,6 @@ async fn spawn_ffmpeg_reader(
                             continue;
                         }
 
-                        println!(
-                            "[camera {camera_idx}] Received output frame: {}x{}, fmt={}, index={}, ts={}",
-                            frame.width,
-                            frame.height,
-                            frame.pix_fmt,
-                            frame.output_index,
-                            frame.timestamp
-                        );
-
                         let timestamp = Timestamp::get_current_time().into();
                         let header = Some(Header {
                             timestamp: Some(timestamp),
