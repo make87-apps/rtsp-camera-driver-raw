@@ -1,7 +1,8 @@
 use anyhow::Result;
 use ffmpeg_sidecar::command::FfmpegCommand;
 use ffmpeg_sidecar::event::FfmpegEvent;
-use futures::stream::{StreamExt, SelectAll};
+use futures::stream::{SelectAll, StreamExt};
+use log::{debug, error, info, trace, warn};
 use make87_messages::core::Header;
 use make87_messages::google::protobuf::Timestamp;
 use make87_messages::image::uncompressed::{ImageRawAny, ImageRgb888, ImageYuv420};
@@ -9,7 +10,6 @@ use tokio::sync::watch;
 use tokio::task;
 use tokio_stream::wrappers::WatchStream;
 use url::Url;
-use log::{info, warn, error, debug, trace};
 
 type FrameSender = watch::Sender<Option<ImageRawAny>>;
 struct CameraConfig {
@@ -257,8 +257,6 @@ fn load_camera_config() -> Result<CameraConfig, anyhow::Error> {
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    env_logger::init();
-
     make87::initialize();
 
     let config = load_camera_config()?;

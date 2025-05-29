@@ -13,4 +13,3 @@ tokio-stream = { version = "0.1.17", features = ["sync"] }
 url = "2.5.4"
 ffmpeg-sidecar = "2.0.5"
 log = "0.4.27"
-env_logger = "0.11.8"
