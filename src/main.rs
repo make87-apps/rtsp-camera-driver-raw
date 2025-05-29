@@ -112,21 +112,25 @@ async fn spawn_ffmpeg_reader(
                         debug!("[camera {camera_idx}] Parsed duration: {:?}", duration);
                     }
                     FfmpegEvent::Log(level, msg) => {
-                        match level {
-                            ffmpeg_sidecar::event::LogLevel::Error => {
-                                error!("[camera {camera_idx}] FFmpeg log [{:?}]: {}", level, msg);
-                            }
-                            ffmpeg_sidecar::event::LogLevel::Warning => {
-                                warn!("[camera {camera_idx}] FFmpeg log [{:?}]: {}", level, msg);
-                            }
-                            ffmpeg_sidecar::event::LogLevel::Info => {
-                                info!("[camera {camera_idx}] FFmpeg log [{:?}]: {}", level, msg);
-                            }
-                            ffmpeg_sidecar::event::LogLevel::Fatal => {
-                                error!("[camera {camera_idx}] FFmpeg log [FATAL]: {}", msg);
-                            }
-                            ffmpeg_sidecar::event::LogLevel::Unknown => {
-                                warn!("[camera {camera_idx}] FFmpeg log [UNKNOWN]: {}", msg);
+                        if msg.contains("non monotonically increasing dts") {
+                            warn!("[camera {camera_idx}] FFmpeg log [non-monotonic DTS]: {}", msg);
+                        } else {
+                            match level {
+                                ffmpeg_sidecar::event::LogLevel::Error => {
+                                    error!("[camera {camera_idx}] FFmpeg log [{:?}]: {}", level, msg);
+                                }
+                                ffmpeg_sidecar::event::LogLevel::Warning => {
+                                    warn!("[camera {camera_idx}] FFmpeg log [{:?}]: {}", level, msg);
+                                }
+                                ffmpeg_sidecar::event::LogLevel::Info => {
+                                    info!("[camera {camera_idx}] FFmpeg log [{:?}]: {}", level, msg);
+                                }
+                                ffmpeg_sidecar::event::LogLevel::Fatal => {
+                                    error!("[camera {camera_idx}] FFmpeg log [FATAL]: {}", msg);
+                                }
+                                ffmpeg_sidecar::event::LogLevel::Unknown => {
+                                    warn!("[camera {camera_idx}] FFmpeg log [UNKNOWN]: {}", msg);
+                                }
                             }
                         }
                     }
