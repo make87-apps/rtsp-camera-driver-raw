@@ -88,60 +88,60 @@ async fn spawn_ffmpeg_reader(
             for event in iter {
                 match event {
                     FfmpegEvent::ParsedVersion(v) => {
-                        info!("[camera {camera_idx}] Parsed FFmpeg version: {:?}", v);
+                        println!("[camera {camera_idx}] Parsed FFmpeg version: {:?}", v);
                     }
                     FfmpegEvent::ParsedConfiguration(c) => {
-                        info!("[camera {camera_idx}] Parsed FFmpeg configuration: {:?}", c);
+                        println!("[camera {camera_idx}] Parsed FFmpeg configuration: {:?}", c);
                     }
                     FfmpegEvent::ParsedStreamMapping(mapping) => {
-                        info!("[camera {camera_idx}] Parsed stream mapping: {}", mapping);
+                        println!("[camera {camera_idx}] Parsed stream mapping: {}", mapping);
                     }
                     FfmpegEvent::ParsedInput(input) => {
-                        info!("[camera {camera_idx}] Parsed input: {:?}", input);
+                        println!("[camera {camera_idx}] Parsed input: {:?}", input);
                     }
                     FfmpegEvent::ParsedOutput(output) => {
-                        info!("[camera {camera_idx}] Parsed output: {:?}", output);
+                        println!("[camera {camera_idx}] Parsed output: {:?}", output);
                     }
                     FfmpegEvent::ParsedInputStream(stream) => {
-                        debug!("[camera {camera_idx}] Parsed input stream: {:?}", stream);
+                        println!("[camera {camera_idx}] Parsed input stream: {:?}", stream);
                     }
                     FfmpegEvent::ParsedOutputStream(stream) => {
-                        debug!("[camera {camera_idx}] Parsed output stream: {:?}", stream);
+                        println!("[camera {camera_idx}] Parsed output stream: {:?}", stream);
                     }
                     FfmpegEvent::ParsedDuration(duration) => {
-                        debug!("[camera {camera_idx}] Parsed duration: {:?}", duration);
+                        println!("[camera {camera_idx}] Parsed duration: {:?}", duration);
                     }
                     FfmpegEvent::Log(level, msg) => {
                         if msg.contains("non monotonically increasing dts") {
-                            warn!("[camera {camera_idx}] FFmpeg log [non-monotonic DTS]: {}", msg);
+                            eprintln!("[camera {camera_idx}] FFmpeg log [non-monotonic DTS]: {}", msg);
                         } else {
                             match level {
                                 ffmpeg_sidecar::event::LogLevel::Error => {
-                                    error!("[camera {camera_idx}] FFmpeg log [{:?}]: {}", level, msg);
+                                    eprintln!("[camera {camera_idx}] FFmpeg log [{:?}]: {}", level, msg);
                                 }
                                 ffmpeg_sidecar::event::LogLevel::Warning => {
-                                    warn!("[camera {camera_idx}] FFmpeg log [{:?}]: {}", level, msg);
+                                    eprintln!("[camera {camera_idx}] FFmpeg log [{:?}]: {}", level, msg);
                                 }
                                 ffmpeg_sidecar::event::LogLevel::Info => {
-                                    info!("[camera {camera_idx}] FFmpeg log [{:?}]: {}", level, msg);
+                                    println!("[camera {camera_idx}] FFmpeg log [{:?}]: {}", level, msg);
                                 }
                                 ffmpeg_sidecar::event::LogLevel::Fatal => {
-                                    error!("[camera {camera_idx}] FFmpeg log [FATAL]: {}", msg);
+                                    eprintln!("[camera {camera_idx}] FFmpeg log [FATAL]: {}", msg);
                                 }
                                 ffmpeg_sidecar::event::LogLevel::Unknown => {
-                                    warn!("[camera {camera_idx}] FFmpeg log [UNKNOWN]: {}", msg);
+                                    eprintln!("[camera {camera_idx}] FFmpeg log [UNKNOWN]: {}", msg);
                                 }
                             }
                         }
                     }
                     FfmpegEvent::LogEOF => {
-                        info!("[camera {camera_idx}] FFmpeg log ended");
+                        println!("[camera {camera_idx}] FFmpeg log ended");
                     }
                     FfmpegEvent::Error(err) => {
-                        error!("[camera {camera_idx}] Error: {}", err);
+                        eprintln!("[camera {camera_idx}] Error: {}", err);
                     }
                     FfmpegEvent::Progress(progress) => {
-                        debug!("[camera {camera_idx}] Progress: {:?}", progress);
+                        println!("[camera {camera_idx}] Progress: {:?}", progress);
                     }
                     FfmpegEvent::OutputFrame(frame) => {
                         if frame.output_index != stream_index {
@@ -182,7 +182,7 @@ async fn spawn_ffmpeg_reader(
                         };
 
                         if sender.send(Some(image_any)).is_err() {
-                            error!("[camera {camera_idx}] Channel closed, stopping reader thread");
+                            eprintln!("[camera {camera_idx}] Channel closed, stopping reader thread");
                             break;
                         }
                     }
@@ -190,7 +190,7 @@ async fn spawn_ffmpeg_reader(
                         trace!("[camera {camera_idx}] Received output chunk ({} bytes)", chunk.len());
                     }
                     FfmpegEvent::Done => {
-                        info!("[camera {camera_idx}] FFmpeg processing done");
+                        println!("[camera {camera_idx}] FFmpeg processing done");
                     }
                 }
             }
